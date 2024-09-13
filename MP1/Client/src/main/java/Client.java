@@ -26,16 +26,18 @@ public class Client {
             properties.load(inputStream);
             String[] hostNames = properties.getProperty("hostnames").split(",");
             String[] ports = properties.getProperty("ports").split(",");
+            String[] filePaths = properties.getProperty("filepaths").split(",");
             int numberOfVMs = hostNames.length;
             ClientProcessor[] clientProcessors = new ClientProcessor[numberOfVMs];
             Thread[] threads = new Thread[numberOfVMs];
             for (int i = 0; i < numberOfVMs; i++) {
+                String grepCommand = command + " " + filePaths[i];
                 String dstServerAddress = hostNames[i] + "::" + ports[i];
                 clientProcessors[i] = ClientProcessor.builder()
                         .hostname(hostNames[i])
                         .port(Integer.parseInt(ports[i]))
                         .dstServerAddress(dstServerAddress)
-                        .command(command)
+                        .command(grepCommand)
                         .build();
                 threads[i] = new Thread(clientProcessors[i]);
                 threads[i].start();
