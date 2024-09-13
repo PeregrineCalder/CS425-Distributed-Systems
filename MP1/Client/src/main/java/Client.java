@@ -12,7 +12,7 @@ import java.util.Scanner;
  * @version: 1.0
  */
 public class Client {
-    private static final String virtualMachineNetworkConfigPath = "./src/resources/virtualMachineNetworkConfig.properties";
+    private static final String virtualMachineNetworkConfigPath = "virtualMachineNetworkConfig.properties";
     public static void main(String[] args) {
         // Get grep command
         Scanner scanner = new Scanner(System.in);
@@ -21,7 +21,7 @@ public class Client {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
 
-        try (InputStream inputStream = new FileInputStream(virtualMachineNetworkConfigPath)) {
+        try (InputStream inputStream = Client.class.getClassLoader().getResourceAsStream(virtualMachineNetworkConfigPath)) {
             Properties properties = new Properties();
             properties.load(inputStream);
             String[] hostNames = properties.getProperty("hostnames").split(",");
