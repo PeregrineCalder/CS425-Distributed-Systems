@@ -34,7 +34,6 @@ public class GrepHandlerTest {
 
     @Test
     public void test_GrepCommandNoMatch() {
-        System.out.println(logFilePath);
         String command = "grep NOTHING " + logFilePath;
         String result = grepHandler.grep(command);
         System.out.println(result);
