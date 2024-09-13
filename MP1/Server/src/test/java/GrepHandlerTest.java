@@ -18,14 +18,15 @@ public class GrepHandlerTest {
     String pattern;
 
     @BeforeEach
-    public void setup() throws URISyntaxException {
+    public void setup() {
         grepHandler = new GrepHandler();
-        logFilePath = Paths.get(getClass().getClassLoader().getResource("Test.log").toURI()).toString();
+        logFilePath = getClass().getClassLoader().getResource("Test.log").getPath();
         pattern = "\\d{4}-\\d{2}-\\d{2}";
     }
 
     @Test
     public void test_GrepCommand() {
+        System.out.println(logFilePath);
         String command = "grep ERROR " + logFilePath;
         String result = grepHandler.grep(command);
         System.out.println(result);
@@ -33,6 +34,7 @@ public class GrepHandlerTest {
 
     @Test
     public void test_GrepCommandNoMatch() {
+        System.out.println(logFilePath);
         String command = "grep NOTHING " + logFilePath;
         String result = grepHandler.grep(command);
         System.out.println(result);
@@ -40,6 +42,7 @@ public class GrepHandlerTest {
 
     @Test
     public void test_GrepCommandRegexWithOption() {
+        System.out.println(logFilePath);
         String command = "grep -E " + pattern + " " + logFilePath;
         String result = grepHandler.grep(command);
         System.out.println(result);
@@ -47,6 +50,7 @@ public class GrepHandlerTest {
 
     @Test
     public void test_GrepCommandRegexWithoutOption() {
+        System.out.println(logFilePath);
         String pattern = "\\d{4}-\\d{2}-\\d{2}";
         String command = "grep " + pattern + " " + logFilePath;
         String result = grepHandler.grep(command);
