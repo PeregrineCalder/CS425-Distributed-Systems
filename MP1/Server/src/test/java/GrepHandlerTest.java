@@ -1,6 +1,10 @@
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
+
 /**
  * @className: GrepHandlerTest
  * @author: Peregrine Calder
@@ -15,7 +19,7 @@ public class GrepHandlerTest {
     @BeforeEach
     public void setup() {
         grepHandler = new GrepHandler();
-        logFilePath = getClass().getClassLoader().getResource("Test.log").getPath();
+        logFilePath = Paths.get(URLDecoder.decode(getClass().getClassLoader().getResource("Test.log").getPath(), StandardCharsets.UTF_8)).toString();
         pattern = "\\d{4}-\\d{2}-\\d{2}";
     }
 
