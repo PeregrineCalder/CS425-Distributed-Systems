@@ -1,0 +1,10 @@
+2024-09-12 10:01:23.456 [main] ERROR com.example.MainApp - An unexpected error occurred while processing request
+2024-09-12 10:02:12.789 [main] INFO  com.example.MainApp - Application started successfully
+2024-09-12 10:03:45.123 [main] DEBUG com.example.Database - Executing query: SELECT * FROM users WHERE id = 1
+2024-09-12 10:04:23.987 [main] WARN  com.example.MainApp - Deprecated API usage in module ABC
+2024-09-12 10:05:34.456 [main] ERROR com.example.Database - Failed to execute query due to timeout
+2024-09-12 10:06:22.123 [main] INFO  com.example.MainApp - User successfully logged in
+2024-09-12 10:07:55.456 [main] DEBUG com.example.Database - Transaction committed
+2024-09-12 10:08:43.789 [main] ERROR com.example.MainApp - Null pointer exception occurred in module XYZ
+2024-09-12 10:09:34.567 [main] INFO  com.example.MainApp - Application is shutting down
+2024-09-12 10:10:11.345 [main] ERROR com.example.Database - Unable to establish connection to the database
