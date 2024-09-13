@@ -19,9 +19,9 @@ public class GrepHandlerTest {
 
     @BeforeEach
     public void setup() {
-        grepHandler = new GrepHandler();
-        logFilePath = getClass().getClassLoader().getResource("Test.log").getPath();
-        pattern = "\\d{4}-\\d{2}-\\d{2}";
+        this.grepHandler = new GrepHandler();
+        this.logFilePath = getClass().getClassLoader().getResource("Test.log").getPath();
+        this.pattern = "\\d{4}-\\d{2}-\\d{2}";
     }
 
     @Test
