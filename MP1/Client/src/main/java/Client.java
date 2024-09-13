@@ -43,8 +43,8 @@ public class Client {
             for (int i = 0; i < numberOfVMs; i++) {
                 threads[i].join();
             }
-            System.out.println("Total matched files: " + ClientProcessor.getGrepFileCount());
-            System.out.println("Total matched lines: " + ClientProcessor.getGrepTotalLineCount());
+            System.out.println("Total matched files: " + ClientProcessor.getGrepFileCount().get());
+            System.out.println("Total matched lines: " + ClientProcessor.getGrepTotalLineCount().get());
             for (String result : ClientProcessor.getAllGrepResults()) {
                 System.out.println(result);
             }

@@ -24,7 +24,9 @@ public class ClientProcessor implements Runnable{
     private int port;
     private String command;
     private String dstServerAddress;
+    @Getter
     private volatile static AtomicInteger grepTotalLineCount = new AtomicInteger(0);
+    @Getter
     private volatile static AtomicInteger grepFileCount = new AtomicInteger(0);
     @Getter
     private static List<String> allGrepResults = Collections.synchronizedList(new ArrayList<>());
@@ -66,13 +68,5 @@ public class ClientProcessor implements Runnable{
             }
         }
         return 0;
-    }
-
-    public static int getGrepFileCount() {
-        return grepFileCount.get();
-    }
-
-    public static int getGrepTotalLineCount() {
-        return grepTotalLineCount.get();
     }
 }

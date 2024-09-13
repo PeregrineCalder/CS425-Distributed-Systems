@@ -15,6 +15,12 @@ import java.net.Socket;
  * @version: 1.0
  */
 public class ClientProcessorTest {
+    @BeforeEach
+    public void setUp() {
+        ClientProcessor.getGrepFileCount().set(0);
+        ClientProcessor.getGrepTotalLineCount().set(0);
+        ClientProcessor.getAllGrepResults().clear();
+    }
     @Test
     public void test_ClientProcessor() throws Exception{
         try (ServerSocket serverSocket = new ServerSocket(4444)) {
@@ -49,9 +55,11 @@ public class ClientProcessorTest {
             clientProcessorThread.start();
             clientProcessorThread.join();
 
-            Assertions.assertEquals(1, ClientProcessor.getGrepFileCount(), "File count should be 1");
-            Assertions.assertEquals(3, ClientProcessor.getGrepTotalLineCount(), "Total matched lines should be 3");
+            Assertions.assertEquals(1, ClientProcessor.getGrepFileCount().get(), "File count should be 1");
+            Assertions.assertEquals(3, ClientProcessor.getGrepTotalLineCount().get(), "Total matched lines should be 3");
             Assertions.assertFalse(ClientProcessor.getAllGrepResults().isEmpty(), "There should be some grep results.");
+            System.out.println("Grep File Count: " + ClientProcessor.getGrepFileCount().get());
+            System.out.println("Grep Total Line Count: " + ClientProcessor.getGrepTotalLineCount().get());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -72,8 +80,10 @@ public class ClientProcessorTest {
         } catch (InterruptedException e) {
             System.out.println(e.getMessage());
         }
-        Assertions.assertEquals(0, ClientProcessor.getGrepFileCount(), "File count should be 0 when server is down");
-        Assertions.assertEquals(0, ClientProcessor.getGrepTotalLineCount(), "Total matched lines should be 0 when server is down");
+        Assertions.assertEquals(0, ClientProcessor.getGrepFileCount().get(), "File count should be 0 when server is down");
+        Assertions.assertEquals(0, ClientProcessor.getGrepTotalLineCount().get(), "Total matched lines should be 0 when server is down");
+        System.out.println("GrepFileCount: " + ClientProcessor.getGrepFileCount());
+        System.out.println("GrepTotalLineCount: " + ClientProcessor.getGrepTotalLineCount());
     }
 }
 
