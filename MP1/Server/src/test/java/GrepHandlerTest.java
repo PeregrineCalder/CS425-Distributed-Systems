@@ -1,6 +1,7 @@
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
@@ -17,9 +18,9 @@ public class GrepHandlerTest {
     String pattern;
 
     @BeforeEach
-    public void setup() {
+    public void setup() throws URISyntaxException {
         grepHandler = new GrepHandler();
-        logFilePath = Paths.get(URLDecoder.decode(getClass().getClassLoader().getResource("Test.log").getPath(), StandardCharsets.UTF_8)).toString();
+        logFilePath = Paths.get(getClass().getClassLoader().getResource("Test.log").toURI()).toString();
         pattern = "\\d{4}-\\d{2}-\\d{2}";
     }
 
