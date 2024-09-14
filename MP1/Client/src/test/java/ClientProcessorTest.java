@@ -35,6 +35,7 @@ public class ClientProcessorTest {
                     String grepResult = "Matched lines: 3\nError occurred\nError happened\nError stopped";
                     DataOutputStream dataOutputStream = new DataOutputStream(clientSocket.getOutputStream());
                     dataOutputStream.writeUTF(grepResult);
+                    dataOutputStream.writeInt(0);
                     dataOutputStream.flush();
                     dataOutputStream.close();
                     clientSocket.close();
