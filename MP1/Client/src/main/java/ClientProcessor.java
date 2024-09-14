@@ -1,9 +1,11 @@
 import lombok.*;
 
+import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -38,10 +40,22 @@ public class ClientProcessor implements Runnable{
             dataOutputStream.writeUTF(command);
             dataOutputStream.flush();
 
-            // Get grep result
-            DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
-            String grepResult = dataInputStream.readUTF();
-            if (!grepResult.isEmpty()) {
+            // Get grep result as byte array
+            DataInputStream dataInputStream = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
+
+            // Read byte array length
+            int length = dataInputStream.readInt();
+            byte[] grepCommandResultBytes = new byte[length];
+            dataInputStream.readFully(grepCommandResultBytes);
+
+            // Convert byte array to string
+            String grepResult = new String(grepCommandResultBytes, StandardCharsets.UTF_8);
+
+            // Read exit code from server
+            int exitCode = dataInputStream.readInt();
+            if (exitCode == 0
+                    && grepResult.contains("Matched lines: ")
+                    && !grepResult.contains("Matched lines: 0")) {
                 grepFileCount.incrementAndGet();
             }
             int matchedLineCount = getGrepLineCount(grepResult);

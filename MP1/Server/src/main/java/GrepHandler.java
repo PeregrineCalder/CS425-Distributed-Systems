@@ -1,5 +1,8 @@
+import lombok.Getter;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @className: GrepHandler
@@ -8,8 +11,10 @@ import java.io.InputStreamReader;
  * @version: 1.0
  */
 
+@Getter
 public class GrepHandler {
-    public String grep(String command) {
+    private int exitCode;
+    public byte[] grep(String command) {
         StringBuilder result = new StringBuilder();
         int lineCount = 0;
         try {
@@ -25,14 +30,15 @@ public class GrepHandler {
                 result.append(line).append("\n");
                 lineCount++;
             }
-            int exitCode = process.waitFor();
+            exitCode = process.waitFor();
             if (exitCode != 0) {
                 result.append("Grep command failed with exit code: ").append(exitCode).append("\n");
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        return "Matched lines: " + lineCount + "\n" + result.toString();
+        String finalResult =  "Matched lines: " + lineCount + "\n" + result.toString();
+        return finalResult.getBytes(StandardCharsets.UTF_8);
     }
 
     private boolean isRegexPattern (String command) {

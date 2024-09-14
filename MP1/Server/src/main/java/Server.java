@@ -1,6 +1,4 @@
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -22,14 +20,18 @@ public class Server {
                 Socket socket = serverSocket.accept();
                 System.out.println("Connected to client: " + socket.getRemoteSocketAddress());
                 // Receive command from Client
-                DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
+                DataInputStream dataInputStream = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
                 String command = dataInputStream.readUTF();
                 System.out.println("Received grep command: " + command);
                 // Execute grep command and get results
-                String grepCommandRes = new GrepHandler().grep(command);
+                GrepHandler grepHandler = new GrepHandler();
+                byte[] grepCommandRes = grepHandler.grep(command);
+                int exitCode = grepHandler.getExitCode();
                 // Send result back to client
-                DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
-                dataOutputStream.writeUTF(grepCommandRes);
+                DataOutputStream dataOutputStream = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
+                dataOutputStream.writeInt(grepCommandRes.length);
+                dataOutputStream.write(grepCommandRes);
+                dataOutputStream.writeInt(exitCode);
                 dataOutputStream.flush();
                 socket.close();
             }

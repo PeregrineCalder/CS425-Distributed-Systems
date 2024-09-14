@@ -1,5 +1,6 @@
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @className: GrepHandlerTest
@@ -24,14 +25,14 @@ public class GrepHandlerTest {
     public void test_GrepCommand() {
         System.out.println(logFilePath);
         String command = "grep ERROR " + logFilePath;
-        String result = grepHandler.grep(command);
+        String result = new String(grepHandler.grep(command), StandardCharsets.UTF_8);
         System.out.println(result);
     }
 
     @Test
     public void test_GrepCommandNoMatch() {
         String command = "grep NOTHING " + logFilePath;
-        String result = grepHandler.grep(command);
+        String result = new String(grepHandler.grep(command), StandardCharsets.UTF_8);
         System.out.println(result);
     }
 
@@ -39,7 +40,7 @@ public class GrepHandlerTest {
     public void test_GrepCommandRegexWithOption() {
         System.out.println(logFilePath);
         String command = "grep -E " + pattern + " " + logFilePath;
-        String result = grepHandler.grep(command);
+        String result = new String(grepHandler.grep(command), StandardCharsets.UTF_8);
         System.out.println(result);
     }
 
@@ -48,7 +49,7 @@ public class GrepHandlerTest {
         System.out.println(logFilePath);
         String pattern = "\\d{4}-\\d{2}-\\d{2}";
         String command = "grep " + pattern + " " + logFilePath;
-        String result = grepHandler.grep(command);
+        String result = new String(grepHandler.grep(command), StandardCharsets.UTF_8);
         System.out.println(result);
     }
 }
