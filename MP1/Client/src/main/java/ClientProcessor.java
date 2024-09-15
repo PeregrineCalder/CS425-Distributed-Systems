@@ -59,8 +59,8 @@ public class ClientProcessor implements Runnable{
                     incrGrepFileCount(1);
                 }
             } else if (exitCode == 0 && (options.contains("l") || options.contains("L"))) {
-                incrGrepFileCount(1);
                 if (!grepResult.isEmpty()) {
+                    incrGrepFileCount(1);
                     allGrepResults.add("Server: " + dstServerAddress + "\n" + grepResult);
                 }
             } else if (exitCode == 0 && grepResult.contains("Matched lines: ") && !grepResult.contains("Matched lines: 0")) {
