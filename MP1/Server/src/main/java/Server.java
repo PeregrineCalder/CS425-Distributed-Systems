@@ -32,6 +32,8 @@ public class Server {
                 if (grepCommandRes.length > 0) {
                     dataOutputStream.writeInt(grepCommandRes.length);
                     dataOutputStream.write(grepCommandRes);
+                } else {
+                    dataOutputStream.writeInt(0);
                 }
                 dataOutputStream.writeInt(exitCode);
                 dataOutputStream.flush();
