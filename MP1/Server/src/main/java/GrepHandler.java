@@ -74,11 +74,9 @@ public class GrepHandler {
         }
 
         if (options.contains("c")) {
-            String resultString = ("Matched lines: " + lineCount);
-            System.out.println(resultString + " " + lineCount);
-            byte[] bytes = resultString.getBytes(StandardCharsets.UTF_8);
-            return bytes;
+            return ("Matched lines: " + lineCount).getBytes(StandardCharsets.UTF_8);
         } else if (options.contains("l") || options.contains("L")) {
+            System.out.println(new String(result.toString()));
             return result.toString().getBytes(StandardCharsets.UTF_8);
         } else if (options.contains("q")) {
             return new byte[0];

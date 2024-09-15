@@ -85,17 +85,17 @@ You must set up several virtual machines or servers and distribute the log files
    as the file paths have already been set in the configuration file `virtualMachineNetworkConfig.properties`. 
    The Client will handle the `grep` command by appending the file path from the configuration file to the command, 
    ensuring that each VM `grep` a different file according to its configuration.
-   - Enclosing the entire grep pattern in double quotes with escape characters is recommended when running the grep command. This ensures that the pattern is treated as a whole. For example:
+   - Enclosing the entire grep pattern in double quotes is recommended when running the grep command. This ensures that the pattern is treated as a whole. For example:
        ```bash
-       grep \"404 NOT FOUND\"
+       grep "404 NOT FOUND"
        ```
    - When using the -e option for multiple pattern matching, it is recommended to separate each pattern with its own -e. Avoid combining patterns into a single one. For example:
        ```bash
-       grep -e \"404 Not Found\" -e \"Machine failed\"
+       grep -e "404 Not Found" -e "Machine failed"
        ```
    - If you are using regex in your grep command, you must include the -E option to enable extended regex matching. For example:
        ```bash
-       grep -E \"\\d{4}-\\d{2}-\\d{2}\"
+       grep -E "\\d{4}-\\d{2}-\\d{2}"
        ```
      
 ### 4. Log File Generator
