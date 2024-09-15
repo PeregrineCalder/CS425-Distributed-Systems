@@ -73,7 +73,10 @@ public class GrepHandler {
         }
 
         if (options.contains("c")) {
-            return ("Matched lines: " + lineCount).getBytes(StandardCharsets.UTF_8);
+            String resultString = ("Matched lines: " + lineCount);
+            System.out.println(resultString + " " + lineCount);
+            byte[] bytes = resultString.getBytes(StandardCharsets.UTF_8);
+            return bytes;
         } else if (options.contains("l") || options.contains("L")) {
             return result.toString().getBytes(StandardCharsets.UTF_8);
         } else if (options.contains("q")) {
