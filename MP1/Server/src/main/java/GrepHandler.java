@@ -75,9 +75,15 @@ public class GrepHandler {
 
         if (options.contains("c")) {
             return ("Matched lines: " + lineCount).getBytes(StandardCharsets.UTF_8);
-        } else if (options.contains("l") || options.contains("L")) {
+        } else if (options.contains("l")) {
             if (result.isEmpty()) {
-                return "No files found matching the criteria.\n".getBytes(StandardCharsets.UTF_8);
+                return new byte[0];
+            } else {
+                return result.toString().getBytes(StandardCharsets.UTF_8);
+            }
+        } else if (options.contains("L")) {
+            if (result.isEmpty()) {
+                return new byte[0];
             } else {
                 return result.toString().getBytes(StandardCharsets.UTF_8);
             }

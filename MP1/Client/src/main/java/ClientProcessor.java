@@ -58,16 +58,23 @@ public class ClientProcessor implements Runnable{
                 if (exitCode == 0) {
                     incrGrepFileCount(1);
                 }
-            } else if (exitCode == 0 && (options.contains("l") || options.contains("L"))) {
-                if (!grepResult.isEmpty()) {
+            } else if (exitCode == 0) {
+                if (options.contains("l")) {
+                    if (!grepResult.isEmpty()) {
+                        incrGrepFileCount(1);
+                        allGrepResults.add("Server: " + dstServerAddress + "\n" + grepResult);
+                    }
+                } else if (options.contains("L")) {
+                    if (!grepResult.contains("Matched lines: ") || grepResult.contains("Matched lines: 0")) {
+                        incrGrepFileCount(1);
+                        allGrepResults.add("Server: " + dstServerAddress + "\n" + grepResult);
+                    }
+                } else if (grepResult.contains("Matched lines: ") && !grepResult.contains("Matched lines: 0")) {
                     incrGrepFileCount(1);
+                    int matchedLineCount = getGrepLineCount(grepResult);
+                    incrGrepTotalLineCount(matchedLineCount);
                     allGrepResults.add("Server: " + dstServerAddress + "\n" + grepResult);
                 }
-            } else if (exitCode == 0 && grepResult.contains("Matched lines: ") && !grepResult.contains("Matched lines: 0")) {
-                incrGrepFileCount(1);
-                int matchedLineCount = getGrepLineCount(grepResult);
-                incrGrepTotalLineCount(matchedLineCount);
-                allGrepResults.add("Server: " + dstServerAddress + "\n" + grepResult);
             }
             dataOutputStream.close();
             socket.close();
