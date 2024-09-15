@@ -7,6 +7,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.List;
 
 /**
  * @className: ClientProcessorTest
@@ -47,11 +48,13 @@ public class ClientProcessorTest {
             thread.start();
 
             // Simulate client thread
+            List<String> options = List.of("c");
             ClientProcessor clientProcessor = ClientProcessor.builder()
                     .hostname("localhost")
                     .port(4444)
                     .command("grep ERROR log.txt")
                     .dstServerAddress("localhost::4444")
+                    .options(options)
                     .build();
             Thread clientProcessorThread = new Thread(clientProcessor);
             clientProcessorThread.start();
@@ -74,6 +77,7 @@ public class ClientProcessorTest {
                 .port(1986)
                 .command("grep ERROR log.txt")
                 .dstServerAddress("localhost::1986")
+                .options(List.of("c"))
                 .build();
         Thread clientProcessorThread = new Thread(clientProcessor);
         clientProcessorThread.start();
