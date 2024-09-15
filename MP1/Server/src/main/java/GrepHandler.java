@@ -48,14 +48,15 @@ public class GrepHandler {
             String line;
             while ((line = bufferedReader.readLine()) != null) {
                 if (options.contains("c")) {
-                    String[] parts = line.split(":");
-                    if (parts.length == 2) {
-                        try {
-                            int lineMatchCount = Integer.parseInt(parts[1].trim());
-                            lineCount += lineMatchCount;
-                        } catch (NumberFormatException e) {
-                            System.err.println("Error parsing line count: " + parts[1]);
+                    try {
+                        String[] parts = line.split(":");
+                        if (parts.length > 1) {
+                            lineCount += Integer.parseInt(parts[1].trim());
+                        } else {
+                            lineCount += Integer.parseInt(parts[0].trim());
                         }
+                    } catch (NumberFormatException e) {
+                        System.err.println("Error parsing line count: " + line);
                     }
                 } else {
                     result.append(line).append("\n");
