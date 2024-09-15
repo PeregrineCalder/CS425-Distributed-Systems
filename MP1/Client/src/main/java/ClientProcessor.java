@@ -54,15 +54,15 @@ public class ClientProcessor implements Runnable{
 
             if (options.contains("q")) {
                 if (exitCode == 0) {
-                    grepFileCount.incrementAndGet();
+                    incrGrepFileCount(1);
                 }
             } else {
                 String grepResult = new String(grepCommandResultBytes, StandardCharsets.UTF_8);
                 if (exitCode == 0 && (options.contains("l") || options.contains("L"))) {
-                    grepFileCount.incrementAndGet();
+                    incrGrepFileCount(1);
                     allGrepResults.add("Server: " + dstServerAddress + "\n" + grepResult);
                 } else if (exitCode == 0 && grepResult.contains("Matched lines: ") && !grepResult.contains("Matched lines: 0")) {
-                    grepFileCount.incrementAndGet();
+                    incrGrepFileCount(1);
                     int matchedLineCount = getGrepLineCount(grepResult);
                     incrGrepTotalLineCount(matchedLineCount);
                     allGrepResults.add("Server: " + dstServerAddress + "\n" + grepResult);
@@ -79,6 +79,10 @@ public class ClientProcessor implements Runnable{
 
     private static synchronized void incrGrepTotalLineCount(int count) {
         grepTotalLineCount.addAndGet(count);
+    }
+
+    private static synchronized void incrGrepFileCount(int count) {
+        grepFileCount.addAndGet(count);
     }
 
     private int getGrepLineCount (String grepResult) {

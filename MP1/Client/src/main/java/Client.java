@@ -48,10 +48,12 @@ public class Client {
             for (int i = 0; i < numberOfVMs; i++) {
                 threads[i].join();
             }
-            System.out.println("Total matched files: " + ClientProcessor.getGrepFileCount().get());
-            System.out.println("Total matched lines: " + ClientProcessor.getGrepTotalLineCount().get());
+
             if (options.contains("c")) {
                 System.out.println("Total matched lines: " + ClientProcessor.getGrepTotalLineCount().get());
+                for (String result : ClientProcessor.getAllGrepResults()) {
+                    System.out.println(result);
+                }
             } else if (options.contains("l") || options.contains("L") || options.contains("q")) {
                 System.out.println("Total matched files: " + ClientProcessor.getGrepFileCount().get());
             } else {
@@ -60,9 +62,6 @@ public class Client {
                 }
                 System.out.println("Total matched files: " + ClientProcessor.getGrepFileCount().get());
                 System.out.println("Total matched lines: " + ClientProcessor.getGrepTotalLineCount().get());
-            }
-            for (String result : ClientProcessor.getAllGrepResults()) {
-                System.out.println(result);
             }
             stopWatch.stop();
             System.out.println("Execution time: " + stopWatch.prettyPrint());
