@@ -1,8 +1,9 @@
 import lombok.Getter;
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @className: GrepHandler
@@ -14,21 +15,54 @@ import java.nio.charset.StandardCharsets;
 @Getter
 public class GrepHandler {
     private int exitCode;
+    List<String> options = new ArrayList<>();
     public byte[] grep(String command) {
+        String[] commandDetails = command.split(" ");
+        for (int i = 1; i < commandDetails.length; i++) {
+            String part = commandDetails[i];
+            if (part.startsWith("-")) {
+                for (int j = 1; j < part.length(); j++) {
+                    options.add(String.valueOf(part.charAt(j)));
+                }
+            } else if ((i == 1 || commandDetails[i - 1].startsWith("-"))
+                        && part.startsWith("\"")
+                        && part.endsWith("\"")
+                        && part.length() > 1) {
+                commandDetails[i] = part.substring(1, part.length() - 1);
+            } else if (part.startsWith("\"") && (i == 1 || commandDetails[i - 1].startsWith("-"))) {
+                commandDetails[i] = part.substring(1);
+            } else if (part.endsWith("\"") && (i == commandDetails.length - 2 || commandDetails[i + 1].startsWith("-"))) {
+                commandDetails[i] = part.substring(0, part.length() - 1);
+            }
+        }
+        return executeGrep(commandDetails);
+    }
+
+    private byte[] executeGrep(String[] commandDetails) {
         StringBuilder result = new StringBuilder();
         int lineCount = 0;
         try {
-            String[] commandDetails = command.split(" ");
-            if (isRegexPattern(command) && !containsExtendedOption(commandDetails)) {
-                commandDetails = addExtendedOption(commandDetails);
-            }
             ProcessBuilder processBuilder = new ProcessBuilder(commandDetails);
             Process process = processBuilder.start();
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String line;
             while ((line = bufferedReader.readLine()) != null) {
-                result.append(line).append("\n");
-                lineCount++;
+                if (options.contains("c")) {
+                    String[] parts = line.split(":");
+                    if (parts.length == 2) {
+                        try {
+                            int lineMatchCount = Integer.parseInt(parts[1].trim());
+                            lineCount += lineMatchCount;
+                        } catch (NumberFormatException e) {
+                            System.err.println("Error parsing line count: " + parts[1]);
+                        }
+                    }
+                } else {
+                    result.append(line).append("\n");
+                    if (!options.contains("l") && !options.contains("L")) {
+                        lineCount++;
+                    }
+                }
             }
             exitCode = process.waitFor();
             if (exitCode != 0) {
@@ -37,33 +71,16 @@ public class GrepHandler {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        String finalResult =  "Matched lines: " + lineCount + "\n" + result.toString();
-        return finalResult.getBytes(StandardCharsets.UTF_8);
-    }
 
-    private boolean isRegexPattern (String command) {
-        return command.contains("*") || command.contains("+") || command.contains("?") ||
-                command.contains("[") || command.contains("]") || command.contains("{") ||
-                command.contains("}") || command.contains("^") || command.contains("$") ||
-                command.contains("(") || command.contains(")") || command.contains(".") ||
-                command.contains("|");
-    }
-
-    private boolean containsExtendedOption (String[] commandDetails) {
-        for (String part : commandDetails) {
-            if (part.equals("-E")) {
-                return true;
-            }
+        if (options.contains("c")) {
+            return ("Matched lines: " + lineCount).getBytes(StandardCharsets.UTF_8);
+        } else if (options.contains("l") || options.contains("L")) {
+            return result.toString().getBytes(StandardCharsets.UTF_8);
+        } else if (options.contains("q")) {
+            return new byte[0];
+        } else {
+            String finalResult = "Matched lines: " + lineCount + "\n" + result;
+            return finalResult.getBytes(StandardCharsets.UTF_8);
         }
-        return false;
-    }
-
-    // Create a new array and add "-E" after "grep"
-    private String[] addExtendedOption(String[] commandDetails) {
-        String[] newCommandDetails = new String[commandDetails.length + 1];
-        newCommandDetails[0] = commandDetails[0];  // grep
-        newCommandDetails[1] = "-E";  // 插入 -E 选项
-        System.arraycopy(commandDetails, 1, newCommandDetails, 2, commandDetails.length - 1);
-        return newCommandDetails;
     }
 }

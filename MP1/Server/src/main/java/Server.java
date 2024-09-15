@@ -29,8 +29,10 @@ public class Server {
                 int exitCode = grepHandler.getExitCode();
                 // Send result back to client
                 DataOutputStream dataOutputStream = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
-                dataOutputStream.writeInt(grepCommandRes.length);
-                dataOutputStream.write(grepCommandRes);
+                if (grepCommandRes.length > 0) {
+                    dataOutputStream.writeInt(grepCommandRes.length);
+                    dataOutputStream.write(grepCommandRes);
+                }
                 dataOutputStream.writeInt(exitCode);
                 dataOutputStream.flush();
                 socket.close();

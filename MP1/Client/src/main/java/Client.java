@@ -1,6 +1,8 @@
 import org.springframework.util.StopWatch;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.Scanner;
 
@@ -22,6 +24,7 @@ public class Client {
             int numberOfVMs = hostNames.length;
             Scanner scanner = new Scanner(System.in);
             String command = scanner.nextLine();
+            List<String> options = extractOptions(command);
             // Timer
             StopWatch stopWatch = new StopWatch();
             stopWatch.start();
@@ -36,6 +39,7 @@ public class Client {
                         .port(Integer.parseInt(ports[i]))
                         .dstServerAddress(dstServerAddress)
                         .command(grepCommand)
+                        .options(options)
                         .build();
                 threads[i] = new Thread(clientProcessors[i]);
                 threads[i].start();
@@ -46,6 +50,17 @@ public class Client {
             }
             System.out.println("Total matched files: " + ClientProcessor.getGrepFileCount().get());
             System.out.println("Total matched lines: " + ClientProcessor.getGrepTotalLineCount().get());
+            if (options.contains("c")) {
+                System.out.println("Total matched lines: " + ClientProcessor.getGrepTotalLineCount().get());
+            } else if (options.contains("l") || options.contains("L") || options.contains("q")) {
+                System.out.println("Total matched files: " + ClientProcessor.getGrepFileCount().get());
+            } else {
+                for (String result : ClientProcessor.getAllGrepResults()) {
+                    System.out.println(result);
+                }
+                System.out.println("Total matched files: " + ClientProcessor.getGrepFileCount().get());
+                System.out.println("Total matched lines: " + ClientProcessor.getGrepTotalLineCount().get());
+            }
             for (String result : ClientProcessor.getAllGrepResults()) {
                 System.out.println(result);
             }
@@ -56,5 +71,19 @@ public class Client {
         } catch (Exception e) {
             System.out.println("An unexpected error occurred: " + e.getMessage());
         }
+    }
+
+    private static List<String> extractOptions(String command) {
+        List<String> options = new ArrayList<>();
+        String[] commandParts = command.split(" ");
+
+        for (String part : commandParts) {
+            if (part.startsWith("-")) {
+                for (int i = 1; i < part.length(); i++) {
+                    options.add(String.valueOf(part.charAt(i)));
+                }
+            }
+        }
+        return options;
     }
 }

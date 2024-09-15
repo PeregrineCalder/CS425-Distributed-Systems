@@ -26,6 +26,7 @@ public class ClientProcessor implements Runnable{
     private int port;
     private String command;
     private String dstServerAddress;
+    private List<String> options;
     @Getter
     private volatile static AtomicInteger grepTotalLineCount = new AtomicInteger(0);
     @Getter
@@ -46,21 +47,27 @@ public class ClientProcessor implements Runnable{
             // Read byte array length
             int length = dataInputStream.readInt();
             byte[] grepCommandResultBytes = new byte[length];
-            dataInputStream.readFully(grepCommandResultBytes);
-
-            // Convert byte array to string
-            String grepResult = new String(grepCommandResultBytes, StandardCharsets.UTF_8);
-
-            // Read exit code from server
-            int exitCode = dataInputStream.readInt();
-            if (exitCode == 0
-                    && grepResult.contains("Matched lines: ")
-                    && !grepResult.contains("Matched lines: 0")) {
-                grepFileCount.incrementAndGet();
+            if (length > 0) {
+                dataInputStream.readFully(grepCommandResultBytes);
             }
-            int matchedLineCount = getGrepLineCount(grepResult);
-            incrGrepTotalLineCount(matchedLineCount);
-            allGrepResults.add("Server: " + dstServerAddress + "\n" + grepResult);
+            int exitCode = dataInputStream.readInt();
+
+            if (options.contains("q")) {
+                if (exitCode == 0) {
+                    grepFileCount.incrementAndGet();
+                }
+            } else {
+                String grepResult = new String(grepCommandResultBytes, StandardCharsets.UTF_8);
+                if (exitCode == 0 && (options.contains("l") || options.contains("L"))) {
+                    grepFileCount.incrementAndGet();
+                    allGrepResults.add("Server: " + dstServerAddress + "\n" + grepResult);
+                } else if (exitCode == 0 && grepResult.contains("Matched lines: ") && !grepResult.contains("Matched lines: 0")) {
+                    grepFileCount.incrementAndGet();
+                    int matchedLineCount = getGrepLineCount(grepResult);
+                    incrGrepTotalLineCount(matchedLineCount);
+                    allGrepResults.add("Server: " + dstServerAddress + "\n" + grepResult);
+                }
+            }
             dataOutputStream.close();
             socket.close();
         } catch (IOException e) {

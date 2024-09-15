@@ -8,3 +8,6 @@
 2024-09-12 10:08:43.789 [main] ERROR com.example.MainApp - Null pointer exception occurred in module XYZ
 2024-09-12 10:09:34.567 [main] INFO  com.example.MainApp - Application is shutting down
 2024-09-12 10:10:11.345 [main] ERROR com.example.Database - Unable to establish connection to the database
+2024-09-12 10:01:23.456 [main] ERROR com.example.MainApp - "An unexpected error" occurred while processing request
+2024-09-12 10:01:23.456 [main] ERROR com.example.MainApp - "AN UNEXPECTED ERROR" occurred while processing request
+2024-09-12 10:04:23.987 [main] WARN  com.example.MainApp - DEPRECAted API usage in module ABC

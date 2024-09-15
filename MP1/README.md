@@ -79,11 +79,25 @@ You must set up several virtual machines or servers and distribute the log files
    ```bash
    grep ERROR
    ```
-   When running the Client, there is no need to specify the file in the `grep` command, 
+   **Important:**
+
+   - When running the Client, there is no need to specify the file in the `grep` command, 
    as the file paths have already been set in the configuration file `virtualMachineNetworkConfig.properties`. 
    The Client will handle the `grep` command by appending the file path from the configuration file to the command, 
    ensuring that each VM `grep` a different file according to its configuration.
-
+   - Enclosing the entire grep pattern in double quotes with escape characters is recommended when running the grep command. This ensures that the pattern is treated as a whole. For example:
+       ```bash
+       grep \"404 NOT FOUND\"
+       ```
+   - When using the -e option for multiple pattern matching, it is recommended to separate each pattern with its own -e. Avoid combining patterns into a single one. For example:
+       ```bash
+       grep -e \"404 Not Found\" -e \"Machine failed\"
+       ```
+   - If you are using regex in your grep command, you must include the -E option to enable extended regex matching. For example:
+       ```bash
+       grep -E \"\\d{4}-\\d{2}-\\d{2}\"
+       ```
+     
 ### 4. Log File Generator
 
 1. Navigate to the project directory:
@@ -116,11 +130,20 @@ You must set up several virtual machines or servers and distribute the log files
 - **GrepHandlerTest**: 
    - Verifies the functionality of the `GrepHandler`, which executes the `grep` command locally on the server and processes the output.
    - Tests include:
-      - `test_GrepCommand`: Tests that the `GrepHandler` can execute a simple `grep` command and return results.
-      - `test_GrepCommandNoMatch`: Tests cases where no lines match the `grep` command and ensures the correct result is returned.
-      - `test_GrepCommandRegexWithOption`: Tests regex-based `grep` commands with the `-E` option.
-      - `test_GrepCommandRegexWithoutOption`: Tests a regex `gre- p` command without explicitly specifying `-E`, ensuring that the `GrepHandler` adds the option if necessary.
-
+       - `test_GrepCommand`: Tests that the `GrepHandler` can execute a simple `grep` command and return results.
+       - `test_GrepCommandWithQuotation`: Tests that a pattern wrapped in double quotes is correctly handled and returns expected results.
+       - `test_GrepCommandNoMatch`: Tests cases where no lines match the `grep` command and ensures the correct result is returned.
+       - `test_GrepCommandWithSpace`: Tests the handling of patterns with spaces.
+       - `test_GrepCommandWithQuotationMarks`: Tests a `grep` command with patterns containing quotation marks.
+       - `test_GrepCommandWithCountOption`: Tests the `-c` option that returns the count of matched lines.
+       - `test_GrepCommandWitheOption`: Tests the `-e` option with multiple patterns.
+       - `test_GrepCommandWithiOption`: Tests the `-i` option to ignore case distinctions.
+       - `test_GrepCommandWithlOption`: Tests the `-l` option to only print the names of files with matching lines.
+       - `test_GrepCommandWithLOption`: Tests the `-L` option to print the names of files that do not contain the pattern.
+       - `test_GrepCommandWithQuietOption`: Tests the `-q` (quiet) option to ensure no output is returned.
+       - `test_GrepCommandRegexWithOption`: Tests regex-based `grep` commands with the `-E` option.
+       - `test_GrepCommandRegexWithoutOption`: Tests a regex `grep` command without explicitly specifying `-E`, ensuring the correct result is returned without regex handling errors.
+     
 - **logFileGeneratorTest**:
   - Tests the `logFileGenerator`, which generates log files for testing purposes.
   - Test includes:
