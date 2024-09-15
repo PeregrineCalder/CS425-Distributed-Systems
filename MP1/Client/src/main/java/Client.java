@@ -21,48 +21,36 @@ public class Client {
             String[] filePaths = properties.getProperty("filepaths").split(",");
             int numberOfVMs = hostNames.length;
             Scanner scanner = new Scanner(System.in);
-            while (true) {
-                System.out.print("Enter grep command (or type 'exit' to quit): ");
-                String command = scanner.nextLine();
-
-                // Exit the loop if the user types 'exit'
-                if (command.equalsIgnoreCase("exit")) {
-                    System.out.println("Exiting the client.");
-                    break;
-                }
-
-                // Timer
-                StopWatch stopWatch = new StopWatch();
-                stopWatch.start();
-
-                // Create and run client processor
-                ClientProcessor[] clientProcessors = new ClientProcessor[numberOfVMs];
-                Thread[] threads = new Thread[numberOfVMs];
-                for (int i = 0; i < numberOfVMs; i++) {
-                    String grepCommand = command + " " + filePaths[i];
-                    String dstServerAddress = hostNames[i] + "::" + ports[i];
-                    clientProcessors[i] = ClientProcessor.builder()
-                            .hostname(hostNames[i])
-                            .port(Integer.parseInt(ports[i]))
-                            .dstServerAddress(dstServerAddress)
-                            .command(grepCommand)
-                            .build();
-                    threads[i] = new Thread(clientProcessors[i]);
-                    threads[i].start();
-                }
-
-                // Wait for all threads to complete
-                for (int i = 0; i < numberOfVMs; i++) {
-                    threads[i].join();
-                }
-                System.out.println("Total matched files: " + ClientProcessor.getGrepFileCount().get());
-                System.out.println("Total matched lines: " + ClientProcessor.getGrepTotalLineCount().get());
-                for (String result : ClientProcessor.getAllGrepResults()) {
-                    System.out.println(result);
-                }
-                stopWatch.stop();
-                System.out.println("Execution time: " + stopWatch.prettyPrint());
+            String command = scanner.nextLine();
+            // Timer
+            StopWatch stopWatch = new StopWatch();
+            stopWatch.start();
+            // Create and run client processor
+            ClientProcessor[] clientProcessors = new ClientProcessor[numberOfVMs];
+            Thread[] threads = new Thread[numberOfVMs];
+            for (int i = 0; i < numberOfVMs; i++) {
+                String grepCommand = command + " " + filePaths[i];
+                String dstServerAddress = hostNames[i] + "::" + ports[i];
+                clientProcessors[i] = ClientProcessor.builder()
+                        .hostname(hostNames[i])
+                        .port(Integer.parseInt(ports[i]))
+                        .dstServerAddress(dstServerAddress)
+                        .command(grepCommand)
+                        .build();
+                threads[i] = new Thread(clientProcessors[i]);
+                threads[i].start();
             }
+            // Wait for all threads to complete
+            for (int i = 0; i < numberOfVMs; i++) {
+                threads[i].join();
+            }
+            System.out.println("Total matched files: " + ClientProcessor.getGrepFileCount().get());
+            System.out.println("Total matched lines: " + ClientProcessor.getGrepTotalLineCount().get());
+            for (String result : ClientProcessor.getAllGrepResults()) {
+                System.out.println(result);
+            }
+            stopWatch.stop();
+            System.out.println("Execution time: " + stopWatch.prettyPrint());
         } catch (IOException e) {
             System.out.println("Error reading network configuration file: " + e.getMessage());
         } catch (Exception e) {
