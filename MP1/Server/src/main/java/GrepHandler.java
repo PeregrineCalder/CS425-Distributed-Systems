@@ -76,12 +76,14 @@ public class GrepHandler {
         if (options.contains("c")) {
             return ("Matched lines: " + lineCount).getBytes(StandardCharsets.UTF_8);
         } else if (options.contains("l")) {
+            System.out.println(result + " " + exitCode);
             if (result.isEmpty()) {
                 return new byte[0];
             } else {
                 return result.toString().getBytes(StandardCharsets.UTF_8);
             }
         } else if (options.contains("L")) {
+            System.out.println(result + " " + exitCode);
             if (result.isEmpty()) {
                 return new byte[0];
             } else {
