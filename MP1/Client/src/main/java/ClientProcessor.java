@@ -65,7 +65,7 @@ public class ClientProcessor implements Runnable{
                         allGrepResults.add("Server: " + dstServerAddress + "\n" + grepResult);
                     }
                 } else if (options.contains("L")) {
-                    if (!grepResult.contains("Matched lines: ") || grepResult.contains("Matched lines: 0")) {
+                    if (grepResult.isEmpty()) {
                         incrGrepFileCount(1);
                         allGrepResults.add("Server: " + dstServerAddress + "\n" + grepResult);
                     }
